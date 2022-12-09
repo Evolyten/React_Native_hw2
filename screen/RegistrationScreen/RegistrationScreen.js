@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import {
   StyleSheet,
   Text,
@@ -14,15 +14,17 @@ const initialState = {
   login: "",
   email: "",
   password: "",
+  loginInput: "#E8E8E8",
+  emailInput: "#E8E8E8",
+  passwordInput: "#E8E8E8",
 };
-export default function RegistrationScreen() {
-  const [openPass, setOpenPass] = useState(true);
-  const [state, setState] = useState(initialState);
-  const [loginInput, setLoginInput] = useState("#E8E8E8");
-  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+import formReducer from "../../reducers/formReducer";
 
-  const [emailInput, setEmailInput] = useState("#E8E8E8");
-  const [passwordInput, setPasswordInput] = useState("#E8E8E8");
+export default function RegistrationScreen() {
+  const [formState, dispatch] = useReducer(formReducer, initialState);
+
+  const [openPass, setOpenPass] = useState(true);
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
 
   useEffect(() => {
     const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
@@ -40,8 +42,16 @@ export default function RegistrationScreen() {
 
   function onFormSubmit() {
     Keyboard.dismiss();
-    console.log(state);
-    setState(initialState);
+
+    console.log({
+      login: formState.login,
+      email: formState.email,
+      password: formState.password,
+    });
+    dispatch({
+      type: "refresh user data",
+      payload: initialState,
+    });
   }
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -56,43 +66,94 @@ export default function RegistrationScreen() {
             </View>
             <View style={styles.input_wrap}>
               <TextInput
-                style={{ ...styles.input, borderColor: loginInput }}
-                placeholder={"Логин"}
-                placeholderTextColor={"#BDBDBD"}
-                value={state.login}
-                onFocus={() => setLoginInput("#FF6C00")}
-                onBlur={() => setLoginInput("#E8E8E8")}
-                onChangeText={(value) =>
-                  setState((prev) => ({ ...prev, login: value }))
+                style={{ ...styles.input, borderColor: formState.loginInput }}
+                placeholder="Логин"
+                placeholderTextColor="#BDBDBD"
+                value={formState.login}
+                onFocus={() => {
+                  dispatch({
+                    type: "input focus",
+                    field: "loginInput",
+                    payload: "#FF6C00",
+                  });
+                }}
+                onBlur={() =>
+                  dispatch({
+                    type: "input focus",
+                    field: "loginInput",
+                    payload: "#E8E8E8",
+                  })
                 }
+                onChangeText={(value) => {
+                  dispatch({
+                    type: "add input",
+                    field: "login",
+                    payload: value,
+                  });
+                }}
               />
             </View>
             <View style={styles.input_wrap}>
               <TextInput
-                style={{ ...styles.input, borderColor: emailInput }}
-                placeholder={"Адрес электронной почты"}
-                placeholderTextColor={"#BDBDBD"}
-                keyboardType={"email-address"}
-                value={state.email}
-                onFocus={() => setEmailInput("#FF6C00")}
-                onBlur={() => setEmailInput("#E8E8E8")}
-                onChangeText={(value) =>
-                  setState((prev) => ({ ...prev, email: value }))
+                style={{ ...styles.input, borderColor: formState.emailInput }}
+                placeholder="Адрес электронной почты"
+                placeholderTextColor="#BDBDBD"
+                keyboardType="email-address"
+                value={formState.email}
+                onFocus={() => {
+                  dispatch({
+                    type: "input focus",
+                    field: "emailInput",
+                    payload: "#FF6C00",
+                  });
+                }}
+                onBlur={() =>
+                  dispatch({
+                    type: "input focus",
+                    field: "emailInput",
+                    payload: "#E8E8E8",
+                  })
                 }
+                onChangeText={(value) => {
+                  dispatch({
+                    type: "add input",
+                    field: "email",
+                    payload: value,
+                  });
+                }}
               />
             </View>
             <View style={{ marginBottom: isKeyboardOpen ? 32 : 43 }}>
               <TextInput
-                style={{ ...styles.input, borderColor: passwordInput }}
-                placeholder={"Пароль"}
+                style={{
+                  ...styles.input,
+                  borderColor: formState.passwordInput,
+                }}
+                placeholder="Пароль"
                 secureTextEntry={openPass}
-                placeholderTextColor={"#BDBDBD"}
-                value={state.password}
-                onFocus={() => setPasswordInput("#FF6C00")}
-                onBlur={() => setPasswordInput("#E8E8E8")}
-                onChangeText={(value) =>
-                  setState((prev) => ({ ...prev, password: value }))
+                placeholderTextColor="#BDBDBD"
+                value={formState.password}
+                onFocus={() => {
+                  dispatch({
+                    type: "input focus",
+                    field: "passwordInput",
+                    payload: "#FF6C00",
+                  });
+                }}
+                onBlur={() =>
+                  dispatch({
+                    type: "input focus",
+                    field: "passwordInput",
+                    payload: "#E8E8E8",
+                  })
                 }
+                onChangeText={(value) => {
+                  dispatch({
+                    type: "add input",
+                    field: "password",
+                    payload: value,
+                  });
+                }}
               />
               <TouchableOpacity
                 style={styles.show_btn}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import {
   StyleSheet,
   Text,
@@ -11,18 +11,17 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-
+import formReducer from "../../reducers/formReducer";
 const initialState = {
   email: "",
   password: "",
+  emailInput: "#E8E8E8",
+  passwordInput: "#E8E8E8",
 };
 export default function LoginScreen() {
+  const [formState, dispatch] = useReducer(formReducer, initialState);
   const [openPass, setOpenPass] = useState(true);
-  const [state, setState] = useState(initialState);
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
-
-  const [emailInput, setEmailInput] = useState("#E8E8E8");
-  const [passwordInput, setPasswordInput] = useState("#E8E8E8");
 
   useEffect(() => {
     const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
@@ -39,9 +38,11 @@ export default function LoginScreen() {
   }, []);
   function onFormSubmit() {
     Keyboard.dismiss();
-
-    console.log(state);
-    setState(initialState);
+    console.log({ email: formState.email, password: formState.password });
+    dispatch({
+      type: "refresh user data",
+      payload: initialState,
+    });
   }
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -59,34 +60,71 @@ export default function LoginScreen() {
               </View>
               <View style={styles.input_wrap}>
                 <TextInput
-                  style={{ ...styles.input, borderColor: emailInput }}
-                  placeholder={"Адрес электронной почты"}
-                  placeholderTextColor={"#BDBDBD"}
-                  keyboardType={"email-address"}
-                  value={state.email}
-                  onFocus={() => setEmailInput("#FF6C00")}
-                  onBlur={() => setEmailInput("#E8E8E8")}
-                  onChangeText={(value) =>
-                    setState((prev) => ({ ...prev, email: value }))
+                  style={{ ...styles.input, borderColor: formState.emailInput }}
+                  placeholder="Адрес электронной почты"
+                  placeholderTextColor="#BDBDBD"
+                  keyboardType="email-address"
+                  value={formState.email}
+                  onFocus={() => {
+                    dispatch({
+                      type: "input focus",
+                      field: "emailInput",
+                      payload: "#FF6C00",
+                    });
+                  }}
+                  onBlur={() =>
+                    dispatch({
+                      type: "input focus",
+                      field: "emailInput",
+                      payload: "#E8E8E8",
+                    })
                   }
+                  onChangeText={(value) => {
+                    dispatch({
+                      type: "add input",
+                      field: "email",
+                      payload: value,
+                    });
+                  }}
                 />
               </View>
               <View style={{ marginBottom: isKeyboardOpen ? 32 : 43 }}>
                 <TextInput
-                  style={{ ...styles.input, borderColor: passwordInput }}
-                  placeholder={"Пароль"}
-                  secureTextEntry={openPass}
-                  placeholderTextColor={"#BDBDBD"}
-                  value={state.password}
-                  onFocus={() => setPasswordInput("#FF6C00")}
-                  onBlur={() => setPasswordInput("#E8E8E8")}
-                  onChangeText={(value) =>
-                    setState((prev) => ({ ...prev, password: value }))
+                  style={{
+                    ...styles.input,
+                    borderColor: formState.passwordInput,
+                  }}
+                  placeholder="Пароль"
+                  secureTextEntry={formState.showPassword}
+                  placeholderTextColor="#BDBDBD"
+                  value={formState.password}
+                  onFocus={() => {
+                    dispatch({
+                      type: "input focus",
+                      field: "passwordInput",
+                      payload: "#FF6C00",
+                    });
+                  }}
+                  onBlur={() =>
+                    dispatch({
+                      type: "input focus",
+                      field: "passwordInput",
+                      payload: "#E8E8E8",
+                    })
                   }
+                  onChangeText={(value) => {
+                    dispatch({
+                      type: "add input",
+                      field: "password",
+                      payload: value,
+                    });
+                  }}
                 />
                 <TouchableOpacity
                   style={styles.show_btn}
-                  onPress={() => setOpenPass(openPass ? false : true)}
+                  onPress={() => {
+                    setOpenPass(openPass ? false : true);
+                  }}
                 >
                   <Text style={styles.show_btn_title}>Показать</Text>
                 </TouchableOpacity>
