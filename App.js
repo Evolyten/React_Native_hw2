@@ -1,27 +1,13 @@
-import { StatusBar } from "expo-status-bar";
-import { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  View,
-  ImageBackground,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from "react-native";
-import LoginScreen from "./screen/LoginScreen/LoginScreen.js";
-import RegistrationScreen from "./screen/RegistrationScreen/RegistrationScreen.js";
-import * as Font from "expo-font";
+import { useState, createContext } from "react";
 import AppLoading from "expo-app-loading";
+import { NavigationContainer } from "@react-navigation/native";
 
-const loadApplication = async () => {
-  await Font.loadAsync({
-    "Roboto-Regular": require("./assets/fonts/Roboto-Regular.ttf"),
-    "Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),
-  });
-};
-
+import loadApplication from "./fonts/fonts.js";
+import Route from "./route/route.js";
+export const IsLoginContext = createContext();
 export default function App() {
   const [isReady, setIsReady] = useState(false);
-
+  const [isLogin, setIsLogin] = useState(false);
   if (!isReady) {
     return (
       <AppLoading
@@ -33,8 +19,10 @@ export default function App() {
   }
 
   return (
-    <RegistrationScreen />
-
-    // <LoginScreen />
+    <IsLoginContext.Provider value={setIsLogin}>
+      <NavigationContainer>
+        <Route isAuth={isLogin} />
+      </NavigationContainer>
+    </IsLoginContext.Provider>
   );
 }

@@ -1,31 +1,27 @@
-import { useState, useEffect, useReducer } from "react";
+import { useState, useEffect, useReducer, useContext } from "react";
 import {
   StyleSheet,
   Text,
   View,
   TextInput,
-  Pressable,
   TouchableOpacity,
   ImageBackground,
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
+import formReducer from "../../../reducers/formReducer";
 const initialState = {
-  login: "",
   email: "",
   password: "",
-  loginInput: "#E8E8E8",
   emailInput: "#E8E8E8",
   passwordInput: "#E8E8E8",
 };
-import formReducer from "../../reducers/formReducer";
-
-export default function RegistrationScreen() {
+import { IsLoginContext } from "../../../App";
+export default function LoginScreen({ navigation }) {
   const [formState, dispatch] = useReducer(formReducer, initialState);
-
   const [openPass, setOpenPass] = useState(true);
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
-
+  const setIsLogin = useContext(IsLoginContext);
   useEffect(() => {
     const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
       setIsKeyboardOpen(true);
@@ -39,59 +35,28 @@ export default function RegistrationScreen() {
       hideSubscription.remove();
     };
   }, []);
-
   function onFormSubmit() {
     Keyboard.dismiss();
-
-    console.log({
-      login: formState.login,
-      email: formState.email,
-      password: formState.password,
-    });
+    console.log({ email: formState.email, password: formState.password });
     dispatch({
       type: "refresh user data",
       payload: initialState,
     });
+    setIsLogin(true);
   }
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
         <ImageBackground
           style={styles.bg_image}
-          source={require("../../assets/images/BG.png")}
+          source={require("../../../assets/images/BG.png")}
         >
-          <View style={styles.registr_wrap}>
-            <View style={styles.registr_title_wrap}>
-              <Text style={styles.registr_title}>Регистрация</Text>
-            </View>
-            <View style={styles.input_wrap}>
-              <TextInput
-                style={{ ...styles.input, borderColor: formState.loginInput }}
-                placeholder="Логин"
-                placeholderTextColor="#BDBDBD"
-                value={formState.login}
-                onFocus={() => {
-                  dispatch({
-                    type: "input focus",
-                    field: "loginInput",
-                    payload: "#FF6C00",
-                  });
-                }}
-                onBlur={() =>
-                  dispatch({
-                    type: "input focus",
-                    field: "loginInput",
-                    payload: "#E8E8E8",
-                  })
-                }
-                onChangeText={(value) => {
-                  dispatch({
-                    type: "add input",
-                    field: "login",
-                    payload: value,
-                  });
-                }}
-              />
+          {/* <KeyboardAvoidingView
+          // behavior={Platform.OS === "ios" ? "padding" : "height"}
+          > */}
+          <View style={styles.login_wrap}>
+            <View style={styles.login_title_wrap}>
+              <Text style={styles.login_enter}>Войти</Text>
             </View>
             <View style={styles.input_wrap}>
               <TextInput
@@ -130,7 +95,7 @@ export default function RegistrationScreen() {
                   borderColor: formState.passwordInput,
                 }}
                 placeholder="Пароль"
-                secureTextEntry={openPass}
+                secureTextEntry={formState.showPassword}
                 placeholderTextColor="#BDBDBD"
                 value={formState.password}
                 onFocus={() => {
@@ -157,7 +122,9 @@ export default function RegistrationScreen() {
               />
               <TouchableOpacity
                 style={styles.show_btn}
-                onPress={() => setOpenPass(openPass ? false : true)}
+                onPress={() => {
+                  setOpenPass(openPass ? false : true);
+                }}
               >
                 <Text style={styles.show_btn_title}>Показать</Text>
               </TouchableOpacity>
@@ -172,7 +139,7 @@ export default function RegistrationScreen() {
                     onFormSubmit();
                   }}
                 >
-                  <Text style={styles.sbm_title}>Зарегистрироваться</Text>
+                  <Text style={styles.sbm_title}>Войти</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -180,14 +147,16 @@ export default function RegistrationScreen() {
                   style={{
                     ...styles.registr_link,
                   }}
+                  onPress={() => navigation.navigate("Register")}
                 >
                   <Text style={styles.registr_link_title}>
-                    Уже есть аккаунт? Войти
+                    Нет аккаунта? Зарегистрироваться
                   </Text>
                 </TouchableOpacity>
               </>
             )}
           </View>
+          {/* </KeyboardAvoidingView> */}
         </ImageBackground>
       </View>
     </TouchableWithoutFeedback>
@@ -205,20 +174,21 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     // alignItems: "center",
   },
-  registr_wrap: {
+  login_wrap: {
     backgroundColor: "#fff",
     paddingHorizontal: 16,
+    paddingTop: 32,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
+    fontWeight: "400",
   },
-  registr_title_wrap: {
-    marginTop: 92,
+  login_title_wrap: {
     alignItems: "center",
     marginBottom: 33,
   },
-  registr_title: {
+  login_enter: {
     fontFamily: "Roboto-Medium",
-
+    fontWeight: "500",
     fontSize: 30,
     letterSpacing: 0.01,
     lineHeight: 35,
@@ -267,7 +237,7 @@ const styles = StyleSheet.create({
   },
   registr_link: {
     alignItems: "center",
-    marginBottom: 78,
+    marginBottom: 130,
   },
   registr_link_title: {
     color: "#1B4371",
