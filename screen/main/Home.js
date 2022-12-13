@@ -1,20 +1,21 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { TouchableOpacity, StyleSheet } from "react-native";
-import PostsScreen from "./PostsScreen.js";
-import CreatePostsScreen from "./CreatePostsScreen.js";
-import ProfileScreen from "./ProfileScreen.js";
+import PostsScreen from "./mainScreens/PostsScreen.js";
+import CreatePostsScreen from "./mainScreens/CreatePostsScreen.js";
+import ProfileScreen from "./mainScreens/ProfileScreen";
 import { SimpleLineIcons, Feather, AntDesign } from "@expo/vector-icons";
 import { IsLoginContext } from "../../App.js";
 import { useContext } from "react";
 const MainTab = createBottomTabNavigator();
 
 function Home() {
-  const setIsLogin = useContext(IsLoginContext);
-
   return (
     <MainTab.Navigator
+      inactiveColor="rgba(33, 33, 33, 0.8)"
+      initialRouteName="Posts"
       screenOptions={{
         tabBarShowLabel: false,
+
         tabBarStyle: {
           height: 70,
           paddingHorizontal: 82,
@@ -23,7 +24,7 @@ function Home() {
         tabBarItemStyle: {
           height: 40,
         },
-        tabBarActiveTintColor: "#000",
+        tabBarActiveTintColor: "#fff",
         headerStyle: {
           borderBottomWidth: 1,
           borderBottomColor: "#BDBDBD",
@@ -33,35 +34,30 @@ function Home() {
     >
       <MainTab.Screen
         options={{
-          tabBarIcon: (focused, size, color) => (
-            <SimpleLineIcons
-              name="grid"
-              size={20}
-              color="rgba(33, 33, 33, 0.8)"
-            />
+          tabBarIcon: ({ color }) => (
+            <SimpleLineIcons name="grid" size={20} color={color} />
           ),
-          headerRight: () => (
-            <TouchableOpacity
-              style={styles.icon_logout_wrap}
-              onPress={() => setIsLogin(false)}
-            >
-              <Feather name="log-out" size={24} color="#BDBDBD" />
-            </TouchableOpacity>
-          ),
-        }}
-        name="Posts"
-        component={PostsScreen}
-      />
-      <MainTab.Screen
-        options={{
-          tabBarIcon: (focused, size, color) => (
-            <AntDesign name="plus" size={17} color="#fff" />
-          ),
+          headerShown: false,
+          tabBarActiveBackgroundColor: "#FF6C00",
           tabBarItemStyle: {
             width: 70,
             height: 40,
             borderRadius: 20,
-            backgroundColor: "#FF6C00",
+          },
+        }}
+        name="Post"
+        component={PostsScreen}
+      />
+      <MainTab.Screen
+        options={{
+          tabBarIcon: ({ focused, color }) => (
+            <AntDesign name="plus" size={17} color={color} />
+          ),
+          tabBarActiveBackgroundColor: "#FF6C00",
+          tabBarItemStyle: {
+            width: 70,
+            height: 40,
+            borderRadius: 20,
           },
         }}
         name="Create Post"
@@ -69,9 +65,15 @@ function Home() {
       />
       <MainTab.Screen
         options={{
-          tabBarIcon: (focused, size, color) => (
-            <Feather name="user" size={24} color="rgba(33, 33, 33, 0.8)" />
+          tabBarIcon: ({ color }) => (
+            <Feather name="user" size={24} color={color} />
           ),
+          tabBarActiveBackgroundColor: "#FF6C00",
+          tabBarItemStyle: {
+            width: 70,
+            height: 40,
+            borderRadius: 20,
+          },
           headerShown: false,
         }}
         name="Profile"

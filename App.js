@@ -1,4 +1,4 @@
-import { useState, createContext } from "react";
+import { useState, createContext, useEffect } from "react";
 import AppLoading from "expo-app-loading";
 import { NavigationContainer } from "@react-navigation/native";
 
@@ -8,6 +8,7 @@ export const IsLoginContext = createContext();
 export default function App() {
   const [isReady, setIsReady] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   if (!isReady) {
     return (
       <AppLoading
@@ -17,6 +18,19 @@ export default function App() {
       />
     );
   }
+  // useEffect(() => {
+  //   const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+  //     setIsKeyboardOpen(true);
+  //   });
+  //   const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+  //     setIsKeyboardOpen(false);
+  //   });
+
+  //   return () => {
+  //     showSubscription.remove();
+  //     hideSubscription.remove();
+  //   };
+  // }, []);
 
   return (
     <IsLoginContext.Provider value={setIsLogin}>

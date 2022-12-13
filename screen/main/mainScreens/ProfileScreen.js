@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { AntDesign, Feather } from "@expo/vector-icons";
-import { IsLoginContext } from "../../App";
+import { IsLoginContext } from "../../../App";
 const ProfileScreen = () => {
   const window = useWindowDimensions().width;
   const setIsLogin = useContext(IsLoginContext);
@@ -18,13 +18,13 @@ const ProfileScreen = () => {
     <View style={styles.container}>
       <ImageBackground
         style={styles.bg_image}
-        source={require("../../assets/images/BG.png")}
+        source={require("../../../assets/images/BG.png")}
       >
         <View style={styles.content_wrap}>
           <View style={{ ...styles.profile_img_wrap, left: window / 2 - 60 }}>
             <Image
               style={styles.profile_img}
-              source={require("../../assets/images/User.jpg")}
+              source={require("../../../assets/images/User.jpg")}
             />
             <TouchableOpacity style={styles.add_user_photo}>
               <AntDesign

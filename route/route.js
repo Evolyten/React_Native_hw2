@@ -1,10 +1,8 @@
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import LoginScreen from "../screen/auth/LoginScreen/LoginScreen.js";
 import RegistrationScreen from "../screen/auth/RegistrationScreen/RegistrationScreen.js";
 import Home from "../screen/main/Home.js";
 const AuthStack = createStackNavigator();
-const MainTab = createBottomTabNavigator();
 const Route = ({ isAuth }) => {
   return !isAuth ? (
     <AuthStack.Navigator>
